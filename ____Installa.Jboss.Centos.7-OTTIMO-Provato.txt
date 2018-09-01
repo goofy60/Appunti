@@ -1,0 +1,132 @@
+INSTALL JBOSS 7.1 su Centos 7.X
+
+-----------------------------------------SCARICA Java Oracle v 1.7.X altrimenti jboss 7 non funziona
+
+yum localinstall jre-7u80-linux-x64.rpm
+
+alternatives --install /usr/bin/java java /usr/java/jre1.7.0_80/bin/java 2
+
+alternatives --config java
+
+-----------------------------------------SCARICA JBOSS 7.1
+l'ho installa in /opt/
+
+
+aggiungi in /etc/profile
+	variabile per proxy
+
+wget http://download.jboss.org/jbossas/7.1/jboss-as-7.1.1.Final/jboss-as-7.1.1.Final.zip
+
+unzip jboss-as-7.1.1.Final.zip -d /opt/
+
+cd /opt/
+
+ln -s jboss-as-7.1.1.Final/ jboss
+
+
+adduser jboss
+
+chown -R jboss. /opt/jboss-as-7.1.1.Final/ /opt/jboss
+
+su - jboss
+
+cd /opt/jboss/bin
+
+./add-user.sh
+
+
+What type of user do you wish to add?
+ a) Management User (mgmt-users.properties)
+ b) Application User (application-users.properties)
+(a): a
+
+Enter the details of the new user to add.
+Realm (ManagementRealm) : [Enter]
+Username : jboss
+Password : [Password]
+Re-enter Password : [Password]
+About to add user 'jboss' for realm 'ManagementRealm'
+Is this correct yes/no? yes
+
+
+
+
+./standalone.sh -Djboss.bind.address=0.0.0.0 -Djboss.bind.address.management=0.0.0.0 &
+
+
+service firewalld stop
+
+------------------------------------------------------------------------------
+crea  
+/usr/lib/systemd/system/jboss.service 
+
+==========================================jboss.service
+[Unit]
+    Description=JBOSS  7
+    After=NetworkManager.service
+
+[Service]
+    Type=forking
+    ExecStart=/opt/jboss/bin/init.d/jboss-as-standalone.sh start
+    ExecStop=/opt/jboss/bin/init.d/jboss-as-standalone.sh stop
+    ExecReload=/opt/jboss/bin/init.d/jboss-as-standalone.sh restart
+    PIDFile=/var/run/jboss-as/jboss-as-standalone.pid
+
+    [Install]
+    WantedBy=multi-user.target
+==========================================fine -jboss.service
+
+
+
+
+modificare
+/opt/jboss/bin/init.d/jboss-as-standalone.sh 
+	inserendo il path dove abbiamo installato jboss e asteriscando vecchio path /usr/share/jboss-as
+
+#if [ -z "$JBOSS_HOME" ]; then
+#  JBOSS_HOME=/usr/share/jboss-as
+#fi
+if [ -z "$JBOSS_HOME" ]; then
+  JBOSS_HOME=/opt/jboss
+fi
+export JBOSS_HOME
+
+
+
+
+mkdir /etc/jboss-as
+chown jboss:jboss /etc/jboss-as
+
+creare in /etc/jboss-as/jboss-as.conf
+	ed inserire
+==========================================jboss-as.conf
+# General configuration for the init.d scripts,
+# not necessarily for JBoss AS itself.
+
+# The username who should own the process.
+#   è l'utente che abbiamo creato in precedenza
+ JBOSS_USER=jboss
+
+# The amount of time to wait for startup
+#
+# STARTUP_WAIT=30
+
+# The amount of time to wait for shutdown
+#
+# SHUTDOWN_WAIT=30
+
+# Location to keep the console log
+#
+ JBOSS_CONSOLE_LOG=/var/log/jboss-as/console.log
+
+========================================fine jboss-as.conf
+
+
+
+
+
+
+
+
+
+

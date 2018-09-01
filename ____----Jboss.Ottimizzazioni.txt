@@ -1,0 +1,22 @@
+Poolsize  minimo e max
+10-150
+si può fare da interfaccia grafica porta 9990 
+
+================================================================
+ <timeout>
+    <idle-timeout-minutes>3</idle-timeout-minutes>
+ </timeout>
+
+================================================================
+JAVA_OPTS="-Xms4096m -Xmx4096m -XX:MaxPermSize=1024m -Djava.net.preferIPv4Stack=true -Dorg.jboss.resolver.warning=true -Dsun.rmi.dgc.client.gcInterval=3600000 -Dsun.rmi.dgc.server.gcInterval=3600000 -XX:-UseGCOverheadLimit"
+
+================================================================OPZIONI AGGRESSIVE
+JAVA_OPTS="$JAVA_OPTS  -Xms64m -Xmx512m -XX:MaxPermSize=256m -XX:+AggressiveOpts  "
+
+
+https://www.outjected.com/blog/2012/12/13/another-mod-proxy-jboss-how-to.html
+
+Interessante video jboss-apache-
+https://www.youtube.com/watch?v=AOV4zZ093MY
+https://mindmajix.com/jboss/load-balancing-web-applications
+http://www.diegocastronuovo.com/modjk-load-balancing-esempio/
